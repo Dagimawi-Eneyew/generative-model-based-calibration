@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# DECI-Net - alternative configuration.
+# ---------------------------------------------------------------------------
+
+model: decinet
+
+architecture:
+  num_coupling_blocks: 16
+  num_layers: 2
+  num_neurons: 128
+
+  hidden_activation: relu
+  translation_activation: linear
+  scale_activation: tanh
+  kernel_initializer: glorot_normal
+
+  l2_regularization: 1.0e-5
+
+  conditioning: denoised_encoding
+
+  autoencoder:
+    # Five encoder layers, mirrored in the decoder.
+    encoder_units: [512, 256, 128, 64, 32]
+    bottleneck_size: 10
+    hidden_activation: relu
+    output_activation: linear
+    bottleneck_activation: relu
+    kernel_initializer: glorot_normal
+    l2_regularization: 1.0e-5
+
+training:
+  epochs: 50
+  batch_size: 2048
+  learning_rate: 1.0e-4
+  optimizer: adam
+  early_stopping_patience: 5
+  validation_split: 0.1
+  restore_best_weights: true
+  shuffle: true
+  seed: 23
+  lambda_reconstruction: 1.0
+
+inference:
+  n_posterior_samples: 1000
+  point_estimate: mean
+  seed: 23

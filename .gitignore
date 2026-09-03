@@ -1,0 +1,49 @@
+# ---- user-specific configuration -------------------------------------------
+# paths.yaml holds machine-local paths (data root, EnergyPlus install).
+# Copy configs/paths.example.yaml to configs/paths.yaml and edit that copy.
+configs/paths.yaml
+
+# ---- generated data and artefacts ------------------------------------------
+# Everything under data/ is produced by the pipeline scripts and can be very
+# large (the full training set is ~3.5 M rows x 3 augmentation versions).
+data/*
+!data/.gitkeep
+!data/README.md
+
+outputs/
+runs/
+/figures/
+*.log
+
+# EnergyPlus run leftovers
+eplusout*
+eplustbl*
+*.audit
+*.bnd
+*.eio
+*.end
+*.err
+*.eso
+*.mdd
+*.mtd
+*.mtr
+*.rdd
+*.shd
+*.svg
+Energy+.ini
+
+# ---- material that is not part of the public release -----------------------
+_archive_not_released/
+
+# ---- python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store

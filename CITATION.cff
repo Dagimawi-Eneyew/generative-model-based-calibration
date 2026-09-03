@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite the accompanying paper (preferred-citation).
+title: "GenPhysiCal / DECI-Net: reference implementation"
+abstract: >-
+  Reference implementation of the GenPhysiCal continuous model-calibration
+  framework and the DECI-Net (Denoised-Encodings-Conditioned Invertible Neural
+  Network) generative calibrator model for physics-based models in smart-building
+  digital twins.
+type: software
+license: MIT
+authors:
+  - family-names: Eneyew
+    given-names: Dagimawi D.
+    affiliation: "Department of Electrical and Computer Engineering, Western University"
+  - family-names: Capretz
+    given-names: Miriam A. M.
+    affiliation: "Department of Electrical and Computer Engineering, Western University"
+  - family-names: Bitsuamlak
+    given-names: Girma T.
+    affiliation: "Department of Civil and Environmental Engineering / WindEEE Research Institute, Western University"
+keywords:
+  - digital twin
+  - model calibration
+  - building energy model
+  - normalizing flows
+  - conditional invertible neural network
+  - uncertainty quantification
+
+preferred-citation:
+  type: article
+  title: >-
+    Continuous model calibration framework for smart-building digital twin:
+    A generative model-based approach
+  authors:
+    - family-names: Eneyew
+      given-names: Dagimawi D.
+    - family-names: Capretz
+      given-names: Miriam A. M.
+    - family-names: Bitsuamlak
+      given-names: Girma T.
+  journal: "Applied Energy"
+  volume: 375
+  start: 124080
+  year: 2024
+  doi: 10.1016/j.apenergy.2024.124080
+  issn: "0306-2619"
+  license: CC-BY-4.0

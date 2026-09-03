@@ -1,0 +1,70 @@
+# ---------------------------------------------------------------------------
+# DECI-Net: Denoised-Encodings-Conditioned Invertible Neural Network.
+#
+# Hyperparameters are the tuned values reported in Section 5.9 of the paper:
+#   12 conditional coupling blocks, two layers in each coupling block, 64
+#   neurons per layer, L2 regularization of 1e-4, a batch size of 2048, a
+#   learning rate of 1e-3, and a denoiser bottleneck size of 8.
+# The autoencoder depth follows Section 5.4: three layers each in the encoder
+# and decoder.
+#
+
+# ---------------------------------------------------------------------------
+
+model: decinet
+
+architecture:
+  # --- conditional invertible neural network ---------------------------------
+  # Must be even - the alternating binary masks are laid out in pairs.
+  num_coupling_blocks: 12
+  num_layers: 2
+  num_neurons: 64
+
+  hidden_activation: relu
+  translation_activation: linear
+  scale_activation: tanh
+  kernel_initializer: glorot_normal
+
+  # Eq. 8, tau: L2 weight regularisation.
+  l2_regularization: 1.0e-4
+
+  # DECI-Net conditions the coupling sub-networks on the autoencoder bottleneck
+  # C_e rather than on the raw observations, so each sub-network sees
+  # 9 + bottleneck_size inputs (Section 4.4, Fig. 2).
+  conditioning: denoised_encoding
+
+  # --- denoising autoencoder conditioning network ---------------------------
+  autoencoder:
+    # Section 5.4: three layers in the encoder; the decoder mirrors them.
+    encoder_units: [256, 128, 64]
+
+    # Table 2: "Bottleneck size".
+    bottleneck_size: 8
+
+    # Section 5.4: "Its hidden layers use ReLU activation, and the output layer
+    # uses linear activation."
+    hidden_activation: relu
+    output_activation: linear
+    bottleneck_activation: relu
+
+    kernel_initializer: glorot_normal
+    l2_regularization: 1.0e-4
+
+training:
+  epochs: 100
+  batch_size: 2048
+  learning_rate: 1.0e-3
+  optimizer: adam
+  early_stopping_patience: 5
+  validation_split: 0.1
+  restore_best_weights: true
+  shuffle: true
+  seed: 23
+
+  
+  lambda_reconstruction: 1.0
+
+inference:
+  n_posterior_samples: 1000
+  point_estimate: mean
+  seed: 23

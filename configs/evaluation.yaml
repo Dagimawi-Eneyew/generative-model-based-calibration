@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# Evaluation protocol (Sections 4.5, 5.5 - 5.11 of the paper).
+# ---------------------------------------------------------------------------
+
+# Table 3: the three experiments and the test-data version each one uses.
+#   Experiment 1 - unmodified test data (no noise, no missing readings)
+#   Experiment 2 - noised test data
+#   Experiment 3 - noised AND missing test data
+experiments:
+  - name: experiment_1
+    label: "No noise, no missing"
+    data_version: clean
+  - name: experiment_2
+    label: "Noisy observations"
+    data_version: noisy
+  - name: experiment_3
+    label: "Noisy and missing observations"
+    data_version: noisy_missing
+
+metrics:
+  # --- probability calibration (Eqs. 10-11) ---------------------------------
+  # Nominal confidence levels p_j.
+  confidence_levels: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45,
+                      0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+
+  # How the empirical frequency p_hat_j is defined.
+  #   "cdf"      - Eq. 10 exactly: fraction of test points whose predictive CDF
+  #                evaluated at the ground truth is <= p_j.
+  #   "interval" - fraction of ground-truth values falling inside the centred
+  #                prediction interval [q_{0.5-p/2}, q_{0.5+p/2}].
+  # Both are computed; this selects which one the headline calibration error
+  # and the calibration plots report.
+  calibration_definition: cdf
+
+  # --- sharpness (Eq. 12) ---------------------------------------------------
+  # Nominal coverage rates (1 - alpha) at which the mean central prediction
+  # interval width is reported.
+  sharpness_coverages: [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99]
+
+  # --- CRPS (Eq. 13) --------------------------------------------------------
+  #   "ensemble" - the empirical CRPS of the posterior sample (Eq. 13).
+  #   "gaussian" - closed-form CRPS of a Gaussian fitted to the posterior's mean
+  #                and standard deviation.
+  crps_estimator: ensemble
+
+  # Subsample used for the ensemble CRPS when the test set is large; set to
+  # null to use every posterior sample.
+  crps_max_samples: null
+
+# --- inference time (Section 5.11) ------------------------------------------
+timing:
+  # Number of separate calibration problems timed, and how many are discarded
+  # as warm-up before timing starts.
+  n_timed_observations: 500
+  n_warmup: 50
+
+# --- model calibration accuracy (Section 5.10, Eq. 14) ----------------------
+model_calibration:
+  # Facility-level meters compared before and after re-simulating the building
+  # energy model with the estimated calibration solution.
+  target_meters:
+    - "Electricity:Facility [J](Hourly)"
+    - "NaturalGas:Facility [J](Hourly)'"
+
+  # Eq. 14: CVRMSE = (1/mean) * sqrt(sum((m - s)^2) / (n - p)) * 100.
+  # Robertson, Polly & Collis (2013) suggest p = 1.
+  cvrmse_p: 1
+
+  # ASHRAE Guideline 14 / FEMP hourly calibration threshold, in percent
+  # (Section 5.7.1).  Used only to draw the acceptance line on Figs. 16-17.
+  hourly_threshold_percent: 30.0
+
+  # Occupant counts and loads cannot be negative; the posterior mean can be.
+  # Predictions are clipped at this floor before being written into the
+  # Schedule:File that drives the re-simulation.
+  clip_predictions_at_zero: true

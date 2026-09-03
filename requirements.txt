@@ -1,0 +1,30 @@
+# Pinned-by-range requirements for the GenPhysiCal / DECI-Net reference code.
+#
+#   pip install -r requirements.txt
+#
+# The EnergyPlus-facing extras (eppy, diyepw) are listed at the bottom and are
+# only required for the data-generation and model-calibration stages
+# (scripts/00_download_weather.py, 01_, 02_ and 06_).  Model training and
+# evaluation run entirely from the generated CSV files.
+
+numpy>=1.23,<2.0
+pandas>=1.5
+scipy>=1.9
+scikit-learn>=1.1
+pyyaml>=6.0
+matplotlib>=3.6
+seaborn>=0.12
+joblib>=1.2
+
+# TensorFlow 2.16+ defaults to Keras 3, which is incompatible with the custom
+# train_step / TF-format save_weights pattern used here.  Keep Keras 2.
+tensorflow>=2.12,<2.16
+tensorflow-probability>=0.20,<0.24
+
+# --- EnergyPlus stages (optional) -------------------------------------------
+# eppy>=0.5.63
+# diyepw>=1.1
+
+# --- development -------------------------------------------------------------
+# pytest>=7.0
+# properscoring>=0.1

@@ -1,0 +1,43 @@
+MIT License
+
+Copyright (c) 2024 Dagimawi D. Eneyew, Miriam A. M. Capretz, Girma T. Bitsuamlak
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+Third-party material bundled with this repository
+--------------------------------------------------------------------------------
+
+assets/idf/baseline_model_atlanta.idf
+    Derived from the U.S. Department of Energy commercial reference building
+    models / OpenStudio small-office prototype models, which are in the public
+    domain.  See:
+      Deru et al. (2011), "U.S. Department of Energy Commercial Reference
+      Building Models of the National Building Stock", NREL.
+      Im, New & Bae (2019), "Updated OpenStudio Small and Medium Office
+      Prototype Models", ORNL.
+
+assets/weather/*.epw
+    TMY and Actual Meteorological Year weather files for Atlanta
+    Hartsfield-Jackson Intl. AP (WMO 722190).  The AMY files were assembled with
+    the `diyepw` package from NOAA ISD observations; see scripts/00_download_weather.py.
+
+The accompanying paper (Applied Energy 375 (2024) 124080) is published open
+access under CC BY 4.0.  This source-code license does not extend to the text
+or figures of the paper.

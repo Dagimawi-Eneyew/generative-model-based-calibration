@@ -1,0 +1,84 @@
+# ---------------------------------------------------------------------------
+# Data generation and augmentation.
+#
+# Implements Sections 5.3.1 - 5.3.3 of
+#   Eneyew, Capretz and Bitsuamlak, Applied Energy 375 (2024) 124080.
+# ---------------------------------------------------------------------------
+# --- Section 5.3.1: sampling the influential model-input space --------------
+sampling:
+  # Latin Hypercube ranges for the three area-dependent model inputs.  The
+  # paper varies each input from 50 % to 100 % of the prototype building's
+  # default value; the resulting absolute ranges are given here.
+  #
+  # Occupant density is expressed as floor area per person, so a *larger*
+  # value means *fewer* occupants - the 18.58 m2/person end of the range is
+  # the 100 % (default-density) end.
+  ranges:
+    occupant_density_m2_per_person: [18.58, 34.0]
+    lighting_power_density_w_per_m2: [9.74, 19.48]
+    equipment_power_density_w_per_m2: [5.38, 10.76]
+
+  # Section 5.3.1: 400 samples for training, 8760 for testing (one per hour of
+  # the year, so the test set imitates a building whose unobserved inputs drift
+  # every hour).
+  n_train_samples: 400
+  n_test_samples: 8760
+
+  # Seeds for scipy.stats.qmc.LatinHypercube.  Fixed so the sample design is
+  # reproducible; they do not correspond to the original (besos-based) draw.
+  train_seed: 400
+  test_seed: 8760
+
+# --- Section 5.3.2: simulation ----------------------------------------------
+simulation:
+  # Hours simulated per run.  8760 = one full year at hourly resolution.
+  hours_per_year: 8760
+
+  # Parallel EnergyPlus processes for the 400-run training batch.  The paper's
+  # runs used 64 cores; lower this to match your machine.
+  num_cores: 8
+
+  # Convert Lights / ElectricEquipment "Electricity Rate" outputs from W to kW,
+  # matching the units used in the paper's tables and figures.
+  convert_loads_to_kw: true
+
+# --- Section 5.3.3: Virtual to Physical Observations Approximation (VPOA) ----
+augmentation:
+  # Three dataset versions are produced and concatenated in this order:
+  #   0. clean          - the raw simulated observations
+  #   1. noisy          - clean + Gaussian noise
+  #   2. noisy+missing  - clean, randomly masked, plus Gaussian noise on the
+  #                       observations that survive
+  # The augmented set is therefore exactly 3x the size of the simulated set.
+  versions: [clean, noisy, noisy_missing]
+
+  # Standard-normal noise scaled by this factor.  The noise is added *after*
+  # standardisation so that its magnitude stays proportional to each variable's
+  # own spread (Section 5.3.3: "the noise was applied after standardizing").
+  noise_factor: 0.1
+
+  # Random sensor failure.  Each row of the masked version drops between
+  # `min_masked` and `max_masked` of the 14 observed variables.
+  # Section 5.3.3: "randomly masking up to 35 % (5 out of 14 variables)".
+  min_masked: 1
+  max_masked: 5
+
+
+  protected_observations: []
+
+  # Seeds for the noise and mask draws.
+  train_noise_seed: 29
+  train_mask_seed: 133
+  test_noise_seed: 19
+  test_mask_seed: 97
+
+# --- Dataset assembly --------------------------------------------------------
+dataset:
+  # Fraction of the training data held out by Keras for validation
+  # (Table 1: "Validation split - 10 % of train data").
+  validation_split: 0.1
+
+  # DECI-Net additionally needs the *clean* observations as the denoising
+  # autoencoder's reconstruction target, appended after the 23 model columns.
+  # The baseline cINN does not use them.
+  include_clean_targets_for_decinet: true

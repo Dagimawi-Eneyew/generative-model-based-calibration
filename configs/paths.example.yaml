@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+# Machine-local paths.
+#
+#   cp configs/paths.example.yaml configs/paths.yaml     # then edit the copy
+#
+# configs/paths.yaml is git-ignored, so your local paths never leave your
+# machine.  Every value can also be supplied on the command line or through an
+# environment variable; the resolution order is
+#
+#     CLI flag  >  environment variable  >  configs/paths.yaml  >  built-in default
+#
+# See src/genphysical/paths.py.
+# ---------------------------------------------------------------------------
+
+# Root directory for everything the pipeline generates: LHS samples, modified
+# IDF files, raw EnergyPlus output, merged CSVs, prepared datasets, trained
+# model checkpoints, metrics and figures.
+#
+# Point this at a disk with room to spare.  The full training set is
+# 400 simulations x 8760 hours = 3,504,000 rows, tripled by the augmentation
+# stage; expect roughly 30-60 GB including the raw EnergyPlus output.
+#
+# Environment variable: GENPHYSICAL_DATA_ROOT
+# CLI flag:             --data-root
+data_root: ./data
+
+# ---------------------------------------------------------------------------
+# EnergyPlus.  Only needed for scripts 00-02 and 06.
+#
+# Environment variable: ENERGYPLUS_DIR
+# CLI flag:             --energyplus-dir
+#
+# The paper used EnergyPlus 23.1, which is also the version stamped into
+# assets/idf/baseline_model_atlanta.idf.  A different minor version will
+# usually run after eppy's version upgrade prompt, but results may shift.
+# ---------------------------------------------------------------------------
+
+# Linux (default install location)
+energyplus_dir: /usr/local/EnergyPlus-23-1-0
+
+# macOS
+# energyplus_dir: /Applications/EnergyPlus-23-1-0
+
+# Windows
+# energyplus_dir: C:/EnergyPlusV23-1-0
+
+# Path to the Energy+.idd data dictionary.  Leave null to use
+# "<energyplus_dir>/Energy+.idd", which is correct for a standard install.
+idd_file: null
+
+# ---------------------------------------------------------------------------
+# Bundled assets.  These are relative to the repository root and normally need
+# no change; override only if you keep the IDF or weather files elsewhere.
+# ---------------------------------------------------------------------------
+idf_dir: ./assets/idf
+weather_dir: ./assets/weather
+
+# Baseline building energy model (DOE small office prototype, Atlanta GA).
+baseline_idf: baseline_model_atlanta.idf
+
+# Weather files.  The paper generated its test set with the 2022 AMY file.
+train_weather: USA_GA_Atlanta-Hartsfield-Jackson-Intl-AP.722190_AMY_2021.epw
+test_weather: USA_GA_Atlanta-Hartsfield-Jackson-Intl-AP.722190_AMY_2022.epw

@@ -1,0 +1,61 @@
+# ---------------------------------------------------------------------------
+# Baseline calibrator: conditional invertible neural network (cINN).
+#
+# Hyperparameters are the tuned values reported in Section 5.9 of the paper:
+#   16 conditional coupling blocks, two layers in each block with 64 neurons
+#   per layer, L2 regularization of 1e-4, a batch size of 2048, and a learning
+#   rate of 1e-3.
+# Fixed settings come from Table 1.
+# ---------------------------------------------------------------------------
+
+model: cinn
+
+architecture:
+  # Number of conditional coupling blocks (Table 2: "Number of CCB").
+  # Must be even - the alternating binary masks are laid out in pairs.
+  num_coupling_blocks: 16
+
+  # Sub-network s(.) and t(.) inside each coupling block (Table 2:
+  # "Number of layers" / "Number of neurons").
+  num_layers: 2
+  num_neurons: 64
+
+  # Table 1: ReLU hidden activation, linear output for t(.), tanh for s(.).
+  hidden_activation: relu
+  translation_activation: linear
+  scale_activation: tanh
+
+  # Table 1: Xavier (Glorot) weight initialisation.
+  kernel_initializer: glorot_normal
+
+  # Eq. 4, tau: L2 weight regularisation (Table 2: "L2 regularization").
+  l2_regularization: 1.0e-4
+
+  # The baseline conditions the coupling sub-networks directly on the 14 raw
+  # observed variables, so each sub-network sees 9 + 14 = 23 inputs.
+  conditioning: raw_observations
+
+training:
+  # Table 1: 100 epochs with early stopping, patience 5, 10 % validation split.
+  epochs: 100
+  batch_size: 2048
+  learning_rate: 1.0e-3
+  optimizer: adam
+  early_stopping_patience: 5
+  validation_split: 0.1
+  restore_best_weights: true
+  shuffle: true
+  seed: 99
+
+inference:
+  # Algorithm 1: number of latent samples drawn per observation, i.e. the size
+  # of the estimated posterior over the 9 unobserved model inputs.
+  n_posterior_samples: 1000
+
+  # Statistic used to collapse the posterior to a point estimate.  The paper
+  # uses the distribution mean for the reported RMSE and CVRMSE results
+  # (Sections 5.5.1 and 5.10); Algorithm 1 describes the maximum-density point,
+  # which is available as "mode".
+  point_estimate: mean
+
+  seed: 99
